@@ -414,7 +414,7 @@ const Messages = () => {
       </div>
 
       {/* Input */}
-      <form onSubmit={sendMessage} className="flex gap-2 px-3 py-3 border-t bg-background shrink-0">
+      <form onSubmit={sendMessage} className="flex gap-2 px-3 border-t bg-background shrink-0" style={{ paddingTop: "12px", paddingBottom: "calc(env(safe-area-inset-bottom) + 12px)" }}>
         <input ref={fileInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={handleMediaUpload} />
         <button
           type="button"
@@ -441,7 +441,7 @@ const Messages = () => {
   return (
     <>
       {/* Mobile: full-screen toggle between list and chat */}
-      <div className="md:hidden -mx-4 sm:-mx-6 -mt-6 -mb-6" style={{ height: "calc(100vh - 3.5rem)" }}>
+      <div className="md:hidden -mx-4 sm:-mx-6 -mt-6 -mb-6" style={{ height: "calc(100vh - 3.5rem - env(safe-area-inset-top))" }}>
         {mobileView === "list" ? (
           <div className="h-full overflow-y-auto p-4">
             {renderList()}

@@ -61,7 +61,7 @@ const ProfileEdit = () => {
     const { error } = await supabase.storage
       .from("posts-media")
       .upload(path, avatarFile, { upsert: true });
-    if (error) { toast.error("Image upload failed. Try a smaller photo."); return null; }
+    if (error) { console.error("Avatar upload error:", error); toast.error(error.message || "Image upload failed."); return null; }
     const { data } = supabase.storage.from("posts-media").getPublicUrl(path);
     return data.publicUrl;
   };
@@ -85,7 +85,8 @@ const ProfileEdit = () => {
 
     setLoading(false);
     if (error) {
-      toast.error("Failed to update profile.");
+      console.error("Profile update error:", error);
+      toast.error(error.message || "Failed to update profile.");
     } else {
       // Bust the profile cache so ProfileView reloads immediately
       queryClient.invalidateQueries({ queryKey: ["profile", user.id] });
