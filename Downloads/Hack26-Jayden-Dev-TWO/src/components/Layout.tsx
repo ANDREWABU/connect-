@@ -132,7 +132,7 @@ const Layout = () => {
       </aside>
 
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-primary text-primary-foreground px-4 py-3 flex items-center justify-between">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-primary text-primary-foreground px-4 flex items-center justify-between" style={{ paddingTop: "calc(env(safe-area-inset-top) + 12px)", paddingBottom: "12px" }}>
         <Link to="/dashboard" className="text-xl font-extrabold tracking-tight">ST</Link>
         <div className="flex items-center gap-1">
           <Link to="/messages" className="relative p-2">
@@ -149,7 +149,7 @@ const Layout = () => {
 
       {/* Mobile Nav Overlay */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-30 bg-primary text-primary-foreground pt-16 px-4">
+        <div className="md:hidden fixed inset-0 z-30 bg-primary text-primary-foreground px-4" style={{ paddingTop: "calc(env(safe-area-inset-top) + 64px)" }}>
           <nav className="space-y-1">
             {navItems.map((item) => renderNavLink(item, true))}
             <Link to={`/profile/${user?.id}`} onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium hover:bg-sidebar-accent/50">
@@ -165,7 +165,7 @@ const Layout = () => {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 md:ml-64 mt-14 md:mt-0">
+      <main className="flex-1 md:ml-64 md:mt-0" style={{ marginTop: "calc(env(safe-area-inset-top) + 56px)" }}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
           <Outlet />
         </div>
