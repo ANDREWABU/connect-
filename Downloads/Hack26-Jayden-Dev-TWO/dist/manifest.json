@@ -1,0 +1,19 @@
+{
+  "name": "Student Talks",
+  "short_name": "ST",
+  "description": "The student platform for Wilfrid Laurier University — connect, share, sell, and discover.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#4c1d95",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "education"]
+}

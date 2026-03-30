@@ -2,22 +2,39 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hack 26</title>
-    <meta name="description" content="Hack 26 student platform" />
-    <meta name="author" content="Hack 26 Team" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Student Talks</title>
+    <meta name="description" content="Student Talks — the student platform for Wilfrid Laurier University." />
+    <meta name="author" content="Student Talks" />
 
-    <meta property="og:title" content="Hack 26" />
-    <meta property="og:description" content="Hack 26 student platform" />
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#4c1d95" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Student Talks" />
+    <link rel="apple-touch-icon" href="/icons/icon.svg" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Student Talks" />
+    <meta property="og:description" content="Connect, share, and discover with Laurier students." />
     <meta property="og:type" content="website" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Hack 26" />
-    <meta name="twitter:description" content="Hack 26 student platform" />
+    <meta name="twitter:title" content="Student Talks" />
+    <meta name="twitter:description" content="Connect, share, and discover with Laurier students." />
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
+        });
+      }
+    </script>
   </body>
 </html>

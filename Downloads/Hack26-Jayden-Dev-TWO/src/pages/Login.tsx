@@ -28,9 +28,9 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center px-4 bg-background">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <Link to="/" className="text-2xl font-extrabold text-primary tracking-tight mb-2 inline-block">SU</Link>
+          <Link to="/" className="text-2xl font-extrabold text-primary tracking-tight mb-2 inline-block">ST</Link>
           <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>Log in with your Laurier student email</CardDescription>
+          <CardDescription>Log in to Student Talks</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">

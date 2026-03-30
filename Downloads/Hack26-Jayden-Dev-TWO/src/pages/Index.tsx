@@ -15,7 +15,7 @@ const Index = () => {
       {}
       <header className="flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
         <div className="flex items-center gap-2">
-          <span className="text-2xl font-extrabold text-primary tracking-tight">SU</span>
+          <span className="text-2xl font-extrabold text-primary tracking-tight">ST</span>
           <span className="text-xs font-medium text-muted-foreground mt-1">Laurier</span>
         </div>
         <div className="flex items-center gap-3">
@@ -35,7 +35,7 @@ const Index = () => {
           <span className="text-primary">Connected.</span>
         </h1>
         <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-8">
-          SU is the student platform where Laurier students connect, share, sell, and discover everything happening on campus.
+          Student Talks is the student platform where Laurier students connect, share, sell, and discover everything happening on campus.
         </p>
         <div className="flex gap-3 justify-center">
           <Button size="lg" asChild><Link to="/signup">Get Started</Link></Button>
@@ -65,7 +65,7 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-        <p>© 2026 SU — Built for Wilfrid Laurier University students.</p>
+        <p>© 2026 Student Talks — Built for Wilfrid Laurier University students.</p>
       </footer>
     </div>
   );

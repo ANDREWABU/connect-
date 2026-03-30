@@ -2,13 +2,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
 import { useState } from "react";
 import { toast } from "sonner";
-import { MessageCircle, Heart, Share2, UserPlus, UserCheck } from "lucide-react";
+import { MessageCircle, Heart, Share2, UserPlus, UserCheck, ArrowLeft, Trash2 } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 
 const supabaseAny = supabase as any;
@@ -107,6 +106,21 @@ const BlogPostPage = () => {
     queryClient.invalidateQueries({ queryKey: ["follows", user.id] });
   };
 
+  const handleDeletePost = async () => {
+    if (!post || !user || user.id !== post.user_id) return;
+    if (!confirm("Delete this post? This cannot be undone.")) return;
+    await supabase.from("comments").delete().eq("post_id", id);
+    await supabaseAny.from("likes").delete().eq("post_id", id);
+    await supabase.from("posts").delete().eq("id", id);
+    toast.success("Post deleted");
+    navigate("/blogs");
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    await supabase.from("comments").delete().eq("id", commentId);
+    queryClient.invalidateQueries({ queryKey: ["comments", id] });
+  };
+
   const addComment = useMutation({
     mutationFn: async () => {
       if (!user) throw new Error("Not logged in");
@@ -116,7 +130,7 @@ const BlogPostPage = () => {
     onSuccess: () => {
       setCommentText("");
       queryClient.invalidateQueries({ queryKey: ["comments", id] });
-      toast.success("Reply posted!");
+      toast.success("Comment posted!");
     },
   });
 
@@ -158,77 +172,132 @@ const BlogPostPage = () => {
     return <img src={url} alt={post?.title} className="w-full rounded-xl max-h-[500px] object-cover" />;
   };
 
-  if (!post) return <div className="p-6">Loading...</div>;
+  if (!post) return <div className="p-6 text-muted-foreground text-sm">Loading...</div>;
 
   return (
-    <div className="space-y-6 p-6 max-w-3xl mx-auto">
-      <Card>
-        <CardContent className="p-6 space-y-4">
-          {/* Author row */}
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <div>
-              <h1 className="text-2xl font-bold">{post.title}</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                by {author?.full_name || "Unknown"} · {format(new Date(post.created_at), "MMM d, yyyy")}
-              </p>
-            </div>
-            {!isOwnPost && user && (
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={handleFollow} className="gap-1">
-                  {userFollows ? <><UserCheck className="h-4 w-4" /> Following</> : <><UserPlus className="h-4 w-4" /> Follow</>}
-                </Button>
-                <Button variant="outline" size="sm" onClick={handlePrivateMessage} disabled={sendingDM} className="gap-1">
-                  <MessageCircle className="h-4 w-4" />
-                  {sendingDM ? "Opening..." : `Message ${author?.full_name?.split(" ")[0] || "User"}`}
-                </Button>
-              </div>
-            )}
+    <div className="max-w-[470px] mx-auto pb-10">
+      {/* Back button */}
+      <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4">
+        <ArrowLeft className="h-4 w-4" /> Back
+      </button>
+
+      {/* Author row */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2.5">
+          <div className="h-10 w-10 rounded-full bg-primary/15 flex items-center justify-center font-bold text-sm text-primary shrink-0">
+            {author?.full_name?.[0]?.toUpperCase() || "?"}
           </div>
-
-          {/* Media */}
-          {renderMedia()}
-
-          {/* Content */}
-          <p className="whitespace-pre-wrap text-base">{post.content}</p>
-
-          {/* Like / Share */}
-          <div className="flex items-center gap-4 pt-2 border-t">
-            <button onClick={handleLike}
-              className={`flex items-center gap-1 text-sm transition-colors ${userLiked ? "text-red-500" : "text-muted-foreground hover:text-red-500"}`}>
-              <Heart className={`h-5 w-5 ${userLiked ? "fill-red-500" : ""}`} />
-              {likes.length} {likes.length === 1 ? "like" : "likes"}
-            </button>
-            <button
-              onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success("Link copied!"); }}
-              className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
-            >
-              <Share2 className="h-4 w-4" /> Share
-            </button>
+          <div>
+            <p className="text-sm font-semibold">{author?.full_name || "Unknown"}</p>
+            <p className="text-xs text-muted-foreground">{format(new Date(post.created_at), "MMM d, yyyy")}</p>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Comments */}
-      <h2 className="text-xl font-semibold">Comments ({comments.length})</h2>
-      <div className="space-y-4">
-        {comments.length === 0 && (
-          <p className="text-sm text-muted-foreground">No comments yet — be the first!</p>
-        )}
-        {comments.map((c) => (
-          <Card key={c.id}>
-            <CardContent className="p-4 space-y-1">
-              <p className="font-semibold text-sm">{c.user?.full_name || "Unknown"}</p>
-              <p className="text-sm whitespace-pre-wrap">{c.content}</p>
-              <p className="text-xs text-muted-foreground">{format(new Date(c.created_at), "MMM d, yyyy h:mm a")}</p>
-            </CardContent>
-          </Card>
-        ))}
+        </div>
+        <div className="flex items-center gap-2">
+          {!isOwnPost && user && (
+            <>
+              <Button variant="outline" size="sm" onClick={handleFollow} className="gap-1 rounded-full text-xs h-8 px-3">
+                {userFollows ? <><UserCheck className="h-3.5 w-3.5" />Following</> : <><UserPlus className="h-3.5 w-3.5" />Follow</>}
+              </Button>
+              <Button variant="outline" size="sm" onClick={handlePrivateMessage} disabled={sendingDM} className="gap-1 rounded-full text-xs h-8 px-3">
+                <MessageCircle className="h-3.5 w-3.5" />
+                {sendingDM ? "..." : "Message"}
+              </Button>
+            </>
+          )}
+          {isOwnPost && (
+            <button onClick={handleDeletePost} className="p-2 text-muted-foreground hover:text-destructive rounded-full transition-colors" title="Delete post">
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+        </div>
       </div>
 
+      {/* Media */}
+      {renderMedia()}
+
+      {/* Actions */}
+      <div className="flex items-center gap-4 py-2 mt-1">
+        <button onClick={handleLike}
+          className={`transition-transform active:scale-90 ${userLiked ? "text-red-500" : "text-foreground hover:text-red-500"}`}>
+          <Heart className={`h-6 w-6 ${userLiked ? "fill-red-500" : ""}`} />
+        </button>
+        <button className="text-foreground"><MessageCircle className="h-6 w-6" /></button>
+        <button
+          onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success("Link copied!"); }}
+          className="text-foreground hover:text-primary"
+        >
+          <Share2 className="h-6 w-6" />
+        </button>
+      </div>
+
+      {/* Likes count */}
+      {likes.length > 0 && (
+        <p className="text-sm font-semibold mb-1">{likes.length} {likes.length === 1 ? "like" : "likes"}</p>
+      )}
+
+      {/* Title + content */}
+      <div className="mb-3">
+        <p className="text-sm">
+          <span className="font-semibold mr-1">{author?.full_name?.split(" ")[0] || "User"}</span>
+          {post.title}
+        </p>
+        {post.content && (
+          <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">{post.content}</p>
+        )}
+      </div>
+
+      {/* Category pill */}
+      <span className="text-xs bg-muted px-2 py-0.5 rounded-full capitalize">{post.category}</span>
+
+      {/* Comments section */}
+      <div className="mt-4 border-t pt-4 space-y-3">
+        {comments.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No comments yet — be the first!</p>
+        ) : (
+          comments.map((c) => (
+            <div key={c.id} className="flex items-start gap-2 group">
+              <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center font-bold text-xs text-primary shrink-0 mt-0.5">
+                {c.user?.full_name?.[0]?.toUpperCase() || "?"}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm">
+                  <span className="font-semibold mr-1">{c.user?.full_name || "Unknown"}</span>
+                  {c.content}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">{format(new Date(c.created_at), "MMM d, h:mm a")}</p>
+              </div>
+              {(user?.id === c.user_id || isOwnPost) && (
+                <button
+                  onClick={() => handleDeleteComment(c.id)}
+                  className="p-1 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                  title="Delete comment"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Comment input */}
       {user && (
-        <div className="space-y-3">
-          <Textarea placeholder="Write a public reply..." value={commentText} onChange={(e) => setCommentText(e.target.value)} />
-          <Button onClick={() => addComment.mutate()} disabled={!commentText}>Post Reply</Button>
+        <div className="flex items-start gap-2 mt-4 pt-4 border-t">
+          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center font-bold text-xs text-primary shrink-0 mt-1">
+            {user.email?.[0]?.toUpperCase() || "?"}
+          </div>
+          <div className="flex-1 space-y-2">
+            <Textarea
+              placeholder="Add a comment..."
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              rows={2}
+              className="resize-none text-sm"
+            />
+            <Button size="sm" onClick={() => addComment.mutate()} disabled={!commentText.trim() || addComment.isPending} className="rounded-full">
+              {addComment.isPending ? "Posting..." : "Post"}
+            </Button>
+          </div>
         </div>
       )}
     </div>

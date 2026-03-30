@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { Search, Plus, MessageCircle, Tag, DollarSign, CheckCircle } from "lucide-react";
+import { Search, Plus, MessageCircle, Tag, DollarSign, CheckCircle, Trash2 } from "lucide-react";
 
 type Listing = {
   id: string;
@@ -126,6 +126,13 @@ const Marketplace = () => {
       toast.success("Marked as sold!");
     },
   });
+
+  const deleteListing = async (id: string) => {
+    if (!confirm("Delete this listing? This cannot be undone.")) return;
+    await supabase.from("marketplace_listings").delete().eq("id", id);
+    queryClient.invalidateQueries({ queryKey: ["listings"] });
+    toast.success("Listing deleted");
+  };
 
   const handleMessage = async (listing: Listing) => {
     if (!user) return;
@@ -341,6 +348,17 @@ const Marketplace = () => {
                     >
                       <CheckCircle className="h-3.5 w-3.5" />
                       Mark Sold
+                    </Button>
+                  )}
+                  {user?.id === listing.seller_id && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10 px-2"
+                      onClick={() => deleteListing(listing.id)}
+                      title="Delete listing"
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   )}
                 </div>
