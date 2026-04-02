@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabase'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const WELCOME_MESSAGES = [
     "Ready to crush a run today?",
@@ -141,28 +142,38 @@ export default function Welcome({ session, onStart }) {
 
   return (
     <div className="welcome-wrapper">
-
+  
       {/* New badge popup */}
-      {newBadge && (
-        <div style={{
-          position: 'fixed', top: 20, left: '50%',
-          transform: 'translateX(-50%)',
-          background: '#111', color: '#fff',
-          borderRadius: 16, padding: '14px 20px',
-          display: 'flex', alignItems: 'center', gap: 12,
-          zIndex: 999, boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
-          animation: 'slideDown 0.3s ease'
-        }}>
-          <span style={{ fontSize: 28 }}>{newBadge.icon}</span>
-          <div>
-            <p style={{ fontWeight: 600, fontSize: 14 }}>badge unlocked!</p>
-            <p style={{ fontSize: 13, opacity: 0.8 }}>{newBadge.label}</p>
-          </div>
-        </div>
-      )}
-
+      <AnimatePresence>
+        {newBadge && (
+          <motion.div
+            initial={{ opacity: 0, y: -80, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -80, scale: 0.8 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            style={{
+              position: 'fixed', top: 20, left: '50%',
+              transform: 'translateX(-50%)',
+              background: '#111', color: '#fff',
+              borderRadius: 16, padding: '14px 20px',
+              display: 'flex', alignItems: 'center', gap: 12,
+              zIndex: 999, boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+            }}>
+            <span style={{ fontSize: 28 }}>{newBadge.icon}</span>
+            <div>
+              <p style={{ fontWeight: 600, fontSize: 14 }}>Badge unlocked!</p>
+              <p style={{ fontSize: 13, opacity: 0.8 }}>{newBadge.label}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+  
       {/* Avatar and greeting */}
-      <div className="welcome-top">
+      <motion.div
+        className="welcome-top"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}>
         <div className="welcome-avatar">
           {avatarUrl ? (
             <img src={avatarUrl} alt="profile" className="welcome-avatar-img" />
@@ -179,119 +190,142 @@ export default function Welcome({ session, onStart }) {
             {stats.streak > 1 ? streakMessage : message}
           </p>
         </div>
-      </div>
-
-      {/* Streak banner — only shows if streak > 0 */}
-      {stats.streak > 0 && (
-        <div style={{
-          background: '#111', color: '#fff',
-          borderRadius: 14, padding: '14px 18px',
-          marginBottom: 12,
-          display: 'flex', justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <div>
-            <div style={{ fontSize: 13, opacity: 0.7, marginBottom: 2 }}>
-              current streak
+      </motion.div>
+  
+      {/* Streak banner */}
+      <AnimatePresence>
+        {stats.streak > 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25, delay: 0.1 }}
+            style={{
+              background: '#111', color: '#fff',
+              borderRadius: 14, padding: '14px 18px',
+              marginBottom: 12,
+              display: 'flex', justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+            <div>
+              <div style={{ fontSize: 13, opacity: 0.7, marginBottom: 2 }}>Current streak</div>
+              <div style={{ fontSize: 28, fontWeight: 700 }}>
+                🔥 {stats.streak} {stats.streak === 1 ? 'day' : 'days'}
+              </div>
             </div>
-            <div style={{ fontSize: 28, fontWeight: 700 }}>
-              🔥 {stats.streak} {stats.streak === 1 ? 'day' : 'days'}
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: 11, opacity: 0.6, marginBottom: 2 }}>Longest streak</div>
+              <div style={{ fontSize: 18, fontWeight: 600 }}>{stats.longestStreak} days</div>
             </div>
-          </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 11, opacity: 0.6, marginBottom: 2 }}>
-              longest streak
-            </div>
-            <div style={{ fontSize: 18, fontWeight: 600 }}>
-              {stats.longestStreak} days
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Stats row */}
-      <div className="welcome-stats">
+          </motion.div>
+        )}
+      </AnimatePresence>
+  
+      {/* Stats */}
+      <motion.div
+        className="welcome-stats"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30, delay: 0.15 }}>
         <div className="welcome-stat">
           <div className="welcome-stat-value">{stats.runs}</div>
-          <div className="welcome-stat-label">total runs</div>
+          <div className="welcome-stat-label">Total runs</div>
         </div>
         <div className="welcome-stat-divider" />
         <div className="welcome-stat">
           <div className="welcome-stat-value">{stats.km}</div>
-          <div className="welcome-stat-label">total km</div>
+          <div className="welcome-stat-label">Total km</div>
         </div>
         <div className="welcome-stat-divider" />
         <div className="welcome-stat">
           <div className="welcome-stat-value">{Math.round(stats.km * 70)}</div>
-          <div className="welcome-stat-label">kcal burned</div>
+          <div className="welcome-stat-label">Kcal burned</div>
         </div>
-      </div>
-
-      {/* Badges section */}
+      </motion.div>
+  
+      {/* Earned badges */}
       {badges.length > 0 && (
-        <div style={{ marginBottom: 12 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          style={{ marginBottom: 12 }}>
           <div className="step-label" style={{ marginBottom: 8 }}>
-            your badges — {badges.length} earned
+            Your badges — {badges.length} earned
           </div>
-          <div style={{
-            display: 'flex', flexWrap: 'wrap', gap: 8
-          }}>
-            {badges.map(b => {
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {badges.map((b, i) => {
               const badge = BADGES[b.badge_type]
               if (!badge) return null
               return (
-                <div key={b.badge_type} style={{
-                  background: '#fff', border: '1px solid #e8e8e8',
-                  borderRadius: 12, padding: '10px 14px',
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  flex: '1 1 calc(50% - 4px)'
-                }}>
+                <motion.div
+                  key={b.badge_type}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2 + i * 0.05, type: 'spring', stiffness: 400, damping: 25 }}
+                  style={{
+                    background: '#fff', border: '1px solid #e8e8e8',
+                    borderRadius: 12, padding: '10px 14px',
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    flex: '1 1 calc(50% - 4px)'
+                  }}>
                   <span style={{ fontSize: 24 }}>{badge.icon}</span>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 500 }}>{badge.label}</div>
                     <div style={{ fontSize: 11, color: '#999' }}>{badge.desc}</div>
                   </div>
-                </div>
+                </motion.div>
               )
             })}
           </div>
-        </div>
+        </motion.div>
       )}
-
-      {/* Badges to earn */}
+  
+      {/* Locked badges */}
       {badges.length < Object.keys(BADGES).length && (
-        <div style={{ marginBottom: 12 }}>
-          <div className="step-label" style={{ marginBottom: 8 }}>
-            badges to earn
-          </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          style={{ marginBottom: 12 }}>
+          <div className="step-label" style={{ marginBottom: 8 }}>Badges to earn</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {Object.entries(BADGES)
               .filter(([key]) => !badges.find(b => b.badge_type === key))
-              .map(([key, badge]) => (
-                <div key={key} style={{
-                  background: '#f5f5f0', border: '1px solid #e8e8e8',
-                  borderRadius: 12, padding: '10px 14px',
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  flex: '1 1 calc(50% - 4px)', opacity: 0.5
-                }}>
-                  <span style={{ fontSize: 24, filter: 'grayscale(1)' }}>
-                    {badge.icon}
-                  </span>
+              .map(([key, badge], i) => (
+                <motion.div
+                  key={key}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.5 }}
+                  transition={{ delay: 0.25 + i * 0.05 }}
+                  style={{
+                    background: '#f5f5f0', border: '1px solid #e8e8e8',
+                    borderRadius: 12, padding: '10px 14px',
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    flex: '1 1 calc(50% - 4px)'
+                  }}>
+                  <span style={{ fontSize: 24, filter: 'grayscale(1)' }}>{badge.icon}</span>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 500 }}>{badge.label}</div>
                     <div style={{ fontSize: 11, color: '#999' }}>{badge.desc}</div>
                   </div>
-                </div>
+                </motion.div>
               ))}
           </div>
-        </div>
+        </motion.div>
       )}
-
-      {/* Start run button */}
-      <button className="btn-primary welcome-btn" onClick={onStart}>
+  
+      {/* Start button */}
+      <motion.button
+        className="btn-primary welcome-btn"
+        onClick={onStart}
+        whileTap={{ scale: 0.97 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, type: 'spring', stiffness: 300, damping: 30 }}>
         Plan a new run →
-      </button>
-
+      </motion.button>
+  
     </div>
   )
 }

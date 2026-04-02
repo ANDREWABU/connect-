@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from './supabase'
 import StepDistance from './components/StepDistance'
 import StepShape from './components/StepShape'
@@ -7,6 +8,26 @@ import History from './components/History'
 import Settings from './components/Settings'
 import Welcome from './components/Welcome'
 import Admin from './pages/Admin'
+
+// Page transition variants — slides in from right, out to left like Instagram
+const pageVariants = {
+  initial: { opacity: 0, x: 30 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -30 }
+}
+
+const pageTransition = {
+  type: 'spring',
+  stiffness: 300,
+  damping: 30
+}
+
+// Fade up — for cards and content
+const fadeUp = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 }
+}
 
 export default function App() {
   const [session, setSession] = useState(null)
@@ -95,71 +116,130 @@ export default function App() {
   // AUTH SCREEN
   if (!session) {
     return (
-      <div style={{ maxWidth: 400, margin: '80px auto', padding: '0 1rem' }}>
-        <div className="auth-logo">
-          <h1>Connect</h1>
-          <p>Your personal running route generator</p>
-        </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key="auth"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -40 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          style={{ maxWidth: 400, margin: '80px auto', padding: '0 1rem' }}>
 
-        <div className="card">
-          <div className="auth-tabs">
-            <button
-              onClick={() => { setAuthMode('login'); setAuthError('') }}
-              className={`auth-tab ${authMode === 'login' ? 'active' : 'inactive'}`}>
-              Log in
-            </button>
-            <button
-              onClick={() => { setAuthMode('signup'); setAuthError('') }}
-              className={`auth-tab ${authMode === 'signup' ? 'active' : 'inactive'}`}>
-              Sign up
-            </button>
-          </div>
+          <motion.div
+            className="auth-logo"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}>
+            
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 4 }}>
+  <img src="/src/assets/logo.svg" alt="Connect" style={{ width: 48, height: 48 }} />
+</div>
+<h1>Connect</h1>
+            <p>Your personal running route generator</p>
+          </motion.div>
 
-          {authMode === 'login' && (
-            <form onSubmit={handleLogin}>
-              <div className="auth-form">
-                <input type="email" placeholder="Email" value={email}
-                  onChange={e => setEmail(e.target.value)} required />
-                <input type="password" placeholder="Password" value={password}
-                  onChange={e => setPassword(e.target.value)} required />
-              </div>
-              {authError && <p className="auth-error error">{authError}</p>}
-              <button className="btn-primary" type="submit" disabled={loading}>
-                {loading ? 'Logging in...' : 'Log in'}
-              </button>
-            </form>
-          )}
+          <motion.div
+            className="card"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 300, damping: 30 }}>
 
-          {authMode === 'signup' && (
-            <form onSubmit={handleSignup}>
-              <div className="auth-form">
-                <input type="text" placeholder="Full name" value={fullName}
-                  onChange={e => setFullName(e.target.value)} required />
-                <input type="email" placeholder="Email" value={email}
-                  onChange={e => setEmail(e.target.value)} required />
-                <input type="password" placeholder="Password (min 6 characters)" value={password}
-                  onChange={e => setPassword(e.target.value)} required />
-                <input type="password" placeholder="Confirm password" value={confirmPassword}
-                  onChange={e => setConfirmPassword(e.target.value)} required />
-              </div>
-              {authError && (
-                <p className={`auth-error ${authError.includes('Check') ? 'success' : 'error'}`}>
-                  {authError}
-                </p>
+            <div className="auth-tabs">
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={() => { setAuthMode('login'); setAuthError('') }}
+                className={`auth-tab ${authMode === 'login' ? 'active' : 'inactive'}`}>
+                Log in
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={() => { setAuthMode('signup'); setAuthError('') }}
+                className={`auth-tab ${authMode === 'signup' ? 'active' : 'inactive'}`}>
+                Sign up
+              </motion.button>
+            </div>
+
+            <AnimatePresence mode="wait">
+              {authMode === 'login' && (
+                <motion.form
+                  key="login"
+                  variants={fadeUp}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  onSubmit={handleLogin}>
+                  <div className="auth-form">
+                    <input type="email" placeholder="Email" value={email}
+                      onChange={e => setEmail(e.target.value)} required />
+                    <input type="password" placeholder="Password" value={password}
+                      onChange={e => setPassword(e.target.value)} required />
+                  </div>
+                  {authError && (
+                    <motion.p
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                      className="auth-error error">
+                      {authError}
+                    </motion.p>
+                  )}
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    className="btn-primary" type="submit" disabled={loading}>
+                    {loading ? 'Logging in...' : 'Log in'}
+                  </motion.button>
+                </motion.form>
               )}
-              <button className="btn-primary" type="submit" disabled={loading}>
-                {loading ? 'Creating account...' : 'Create account'}
-              </button>
-            </form>
-          )}
-        </div>
-      </div>
+
+              {authMode === 'signup' && (
+                <motion.form
+                  key="signup"
+                  variants={fadeUp}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  onSubmit={handleSignup}>
+                  <div className="auth-form">
+                    <input type="text" placeholder="Full name" value={fullName}
+                      onChange={e => setFullName(e.target.value)} required />
+                    <input type="email" placeholder="Email" value={email}
+                      onChange={e => setEmail(e.target.value)} required />
+                    <input type="password" placeholder="Password (min 6 characters)" value={password}
+                      onChange={e => setPassword(e.target.value)} required />
+                    <input type="password" placeholder="Confirm password" value={confirmPassword}
+                      onChange={e => setConfirmPassword(e.target.value)} required />
+                  </div>
+                  {authError && (
+                    <motion.p
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                      className={`auth-error ${authError.includes('Check') ? 'success' : 'error'}`}>
+                      {authError}
+                    </motion.p>
+                  )}
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    className="btn-primary" type="submit" disabled={loading}>
+                    {loading ? 'Creating account...' : 'Create account'}
+                  </motion.button>
+                </motion.form>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
     )
   }
 
   // ADMIN PAGE
   if (activeTab === 'admin' && isAdmin) {
-    return <Admin session={session} onBack={() => setActiveTab('home')} />
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}>
+        <Admin session={session} onBack={() => setActiveTab('home')} />
+      </motion.div>
+    )
   }
 
   // MAIN APP
@@ -167,100 +247,144 @@ export default function App() {
     <div style={{ maxWidth: 480, margin: '0 auto', padding: '1.5rem 1rem 6rem' }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.3px' }}>Connect</h1>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+  <img src="/src/assets/logo.svg" alt="Connect" style={{ width: 36, height: 36 }} />
+  <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.3px' }}>Connect</h1>
+</div>
         {isAdmin && (
-          <button onClick={() => setActiveTab('admin')}
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setActiveTab('admin')}
             style={{ padding: '6px 12px', background: '#111', color: '#fff',
               border: 'none', borderRadius: 8, fontSize: 12, cursor: 'pointer',
               fontFamily: 'DM Sans, sans-serif' }}>
             admin ⚡
-          </button>
+          </motion.button>
         )}
-      </div>
+      </motion.div>
 
-      {/* HOME TAB */}
-      {activeTab === 'home' && !showRun && (
-        <Welcome
-          session={session}
-          onStart={() => { setShowRun(true); setStep(1) }}
-        />
-      )}
+      {/* Tab content with smooth transitions */}
+      <AnimatePresence mode="wait">
 
-      {/* RUN FLOW */}
-      {activeTab === 'home' && showRun && (
-        <>
-          {/* Back button */}
-          <button
-            className="btn-outline"
-            onClick={() => { setShowRun(false); setStep(1) }}
-            style={{ marginBottom: 16 }}>
-            ← Back to home
-          </button>
-
-          {/* Progress bar */}
-          <div style={{ display: 'flex', gap: 6, marginBottom: 24 }}>
-            {[1, 2, 3].map(n => (
-              <div key={n} style={{ flex: 1, height: 3, borderRadius: 999,
-                background: step >= n ? '#111' : '#e0e0e0',
-                transition: 'background 0.3s' }} />
-            ))}
-          </div>
-
-          {step === 1 && (
-            <StepDistance
-              km={km}
-              setKm={setKm}
-              onNext={() => setStep(2)}
-              onAiRoute={(aiShape, aiKm) => {
-                setShape(aiShape)
-                setKm(aiKm)
-              }}
+        {/* HOME */}
+        {activeTab === 'home' && !showRun && (
+          <motion.div
+            key="home"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={pageTransition}>
+            <Welcome
+              session={session}
+              onStart={() => { setShowRun(true); setStep(1) }}
             />
-          )}
-          {step === 2 && (
-            <StepShape shape={shape} setShape={setShape}
-              onNext={() => setStep(3)} onBack={() => setStep(1)} />
-          )}
-          {step === 3 && (
-            <StepMap km={km} shape={shape} session={session}
-              onBack={() => setStep(2)}
-              onDone={() => {
-                setShowRun(false)
-                setStep(1)
-                setKm(5)
-                setShape('circle')
-              }}
-            />
-          )}
-        </>
-      )}
+          </motion.div>
+        )}
 
-      {/* HISTORY TAB */}
-      {activeTab === 'history' && (
-        <div>
-          <button
-            className="btn-outline"
-            onClick={() => setActiveTab('home')}
-            style={{ marginBottom: 16 }}>
-            ← Back to home
-          </button>
-          <History session={session} />
-        </div>
-      )}
+        {/* RUN FLOW */}
+        {activeTab === 'home' && showRun && (
+          <motion.div
+            key={`run-step-${step}`}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={pageTransition}>
 
-      {/* SETTINGS TAB */}
-      {activeTab === 'settings' && (
-        <div>
-          <button
-            className="btn-outline"
-            onClick={() => setActiveTab('home')}
-            style={{ marginBottom: 16 }}>
-            ← Back to home
-          </button>
-          <Settings session={session} onLogout={handleLogout} />
-        </div>
-      )}
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              className="btn-outline"
+              onClick={() => { setShowRun(false); setStep(1) }}
+              style={{ marginBottom: 16 }}>
+              ← Back to home
+            </motion.button>
+
+            <div style={{ display: 'flex', gap: 6, marginBottom: 24 }}>
+              {[1, 2, 3].map(n => (
+                <motion.div
+                  key={n}
+                  animate={{ background: step >= n ? '#111' : '#e0e0e0' }}
+                  transition={{ duration: 0.3 }}
+                  style={{ flex: 1, height: 3, borderRadius: 999 }}
+                />
+              ))}
+            </div>
+
+            {step === 1 && (
+              <StepDistance
+                km={km} setKm={setKm}
+                onNext={() => setStep(2)}
+                onAiRoute={(aiShape, aiKm) => {
+                  setShape(aiShape)
+                  setKm(aiKm)
+                }}
+              />
+            )}
+            {step === 2 && (
+              <StepShape shape={shape} setShape={setShape}
+                onNext={() => setStep(3)} onBack={() => setStep(1)} />
+            )}
+            {step === 3 && (
+              <StepMap km={km} shape={shape} session={session}
+                onBack={() => setStep(2)}
+                onDone={() => {
+                  setShowRun(false)
+                  setStep(1)
+                  setKm(5)
+                  setShape('circle')
+                }}
+              />
+            )}
+          </motion.div>
+        )}
+
+        {/* HISTORY */}
+        {activeTab === 'history' && (
+          <motion.div
+            key="history"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={pageTransition}>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              className="btn-outline"
+              onClick={() => setActiveTab('home')}
+              style={{ marginBottom: 16 }}>
+              ← Back to home
+            </motion.button>
+            <History session={session} />
+          </motion.div>
+        )}
+
+        {/* SETTINGS */}
+        {activeTab === 'settings' && (
+          <motion.div
+            key="settings"
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={pageTransition}>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              className="btn-outline"
+              onClick={() => setActiveTab('home')}
+              style={{ marginBottom: 16 }}>
+              ← Back to home
+            </motion.button>
+            <Settings session={session} onLogout={handleLogout} />
+          </motion.div>
+        )}
+
+      </AnimatePresence>
 
       {/* BOTTOM NAV */}
       <div className="bottom-nav">
@@ -296,14 +420,19 @@ export default function App() {
             )
           },
         ].map(tab => (
-          <button
+          <motion.button
             key={tab.id}
+            whileTap={{ scale: 0.85 }}
             onClick={() => { setActiveTab(tab.id); setShowRun(false) }}
             className={`nav-item ${activeTab === tab.id ? 'active' : ''}`}
             style={{ color: activeTab === tab.id ? '#111' : '#bbb' }}>
-            {tab.icon}
+            <motion.div
+              animate={{ scale: activeTab === tab.id ? 1.1 : 1 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
+              {tab.icon}
+            </motion.div>
             <span className="nav-label">{tab.label}</span>
-          </button>
+          </motion.button>
         ))}
       </div>
     </div>
