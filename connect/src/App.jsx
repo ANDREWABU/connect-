@@ -130,11 +130,7 @@ export default function App() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}>
-            
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 4 }}>
-  <img src="/src/assets/logo.svg" alt="Connect" style={{ width: 48, height: 48 }} />
-</div>
-<h1>Connect</h1>
+            <h1>Connect</h1>
             <p>Your personal running route generator</p>
           </motion.div>
 
@@ -252,10 +248,7 @@ export default function App() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-  <img src="/src/assets/logo.svg" alt="Connect" style={{ width: 36, height: 36 }} />
-  <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.3px' }}>Connect</h1>
-</div>
+        <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.3px' }}>Connect</h1>
         {isAdmin && (
           <motion.button
             whileTap={{ scale: 0.95 }}
