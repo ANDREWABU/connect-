@@ -245,7 +245,8 @@ export default function App() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        style={{ display: 'flex', justifyContent: 'space-between',
+          alignItems: 'center', marginBottom: 24 }}>
         <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.3px' }}>Connect</h1>
         {isAdmin && (
           <motion.button
@@ -287,23 +288,26 @@ export default function App() {
             exit="exit"
             transition={pageTransition}>
 
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              className="btn-outline"
-              onClick={() => { setShowRun(false); setStep(1) }}
-              style={{ marginBottom: 16 }}>
-              ←
-            </motion.button>
-
-            <div style={{ display: 'flex', gap: 6, marginBottom: 24 }}>
-              {[1, 2, 3].map(n => (
-                <motion.div
-                  key={n}
-                  animate={{ background: step >= n ? '#111' : '#e0e0e0' }}
-                  transition={{ duration: 0.3 }}
-                  style={{ flex: 1, height: 3, borderRadius: 999 }}
-                />
-              ))}
+            {/* Back arrow + progress bar inline */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={() => { setShowRun(false); setStep(1) }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: 20, padding: '4px 8px', color: '#111',
+                  flexShrink: 0 }}>
+                ←
+              </motion.button>
+              <div style={{ display: 'flex', gap: 6, flex: 1 }}>
+                {[1, 2, 3].map(n => (
+                  <motion.div
+                    key={n}
+                    animate={{ background: step >= n ? '#111' : '#e0e0e0' }}
+                    transition={{ duration: 0.3 }}
+                    style={{ flex: 1, height: 3, borderRadius: 999 }}
+                  />
+                ))}
+              </div>
             </div>
 
             {step === 1 && (
@@ -343,13 +347,16 @@ export default function App() {
             animate="animate"
             exit="exit"
             transition={pageTransition}>
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              className="btn-outline"
-              onClick={() => setActiveTab('home')}
-              style={{ marginBottom: 16 }}>
-              ←
-            </motion.button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setActiveTab('home')}
+                style={{ background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: 20, padding: '4px 8px', color: '#111' }}>
+                ←
+              </motion.button>
+              <span style={{ fontWeight: 500, fontSize: 16 }}>History</span>
+            </div>
             <History session={session} />
           </motion.div>
         )}
@@ -363,13 +370,16 @@ export default function App() {
             animate="animate"
             exit="exit"
             transition={pageTransition}>
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              className="btn-outline"
-              onClick={() => setActiveTab('home')}
-              style={{ marginBottom: 16 }}>
-              ←
-            </motion.button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setActiveTab('home')}
+                style={{ background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: 20, padding: '4px 8px', color: '#111' }}>
+                ←
+              </motion.button>
+              <span style={{ fontWeight: 500, fontSize: 16 }}>Settings</span>
+            </div>
             <Settings session={session} onLogout={handleLogout} />
           </motion.div>
         )}
@@ -383,7 +393,9 @@ export default function App() {
             id: 'home',
             label: 'home',
             icon: (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="1.8"
+                strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/>
                 <path d="M9 21V12h6v9"/>
               </svg>
@@ -393,7 +405,9 @@ export default function App() {
             id: 'history',
             label: 'history',
             icon: (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="1.8"
+                strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="9"/>
                 <path d="M12 7v5l3 3"/>
               </svg>
@@ -403,7 +417,9 @@ export default function App() {
             id: 'settings',
             label: 'settings',
             icon: (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="1.8"
+                strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="3"/>
                 <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
               </svg>

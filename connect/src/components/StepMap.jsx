@@ -338,7 +338,7 @@ export default function StepMap({ km, shape, session, onBack, onDone }) {
           {[
             { label: 'Distance', value: km + ' km' },
             { label: 'Est. time', value: Math.round(km * 6) + ' min' },
-            { label: 'Calories', value: Math.round(km * 70) + ' kcal' },
+            
           ].map(stat => (
             <div key={stat.label} className="stat-box">
               <div className="stat-value">{stat.value}</div>

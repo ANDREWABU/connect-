@@ -237,10 +237,7 @@ export default function Welcome({ session, onStart }) {
           <div className="welcome-stat-label">Total km</div>
         </div>
         <div className="welcome-stat-divider" />
-        <div className="welcome-stat">
-          <div className="welcome-stat-value">{Math.round(stats.km * 70)}</div>
-          <div className="welcome-stat-label">Kcal burned</div>
-        </div>
+       
       </motion.div>
   
       {/* Earned badges */}
