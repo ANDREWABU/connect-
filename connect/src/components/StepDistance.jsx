@@ -27,42 +27,15 @@ export default function StepDistance({ km, setKm, onNext, onAiRoute }) {
     setAiResult(null)
 
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('/api/suggest', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{
-            role: 'user',
-            content: `You are a running coach assistant for an app called Connect that generates circular running routes.
-            
-The user said: "${aiPrompt}"
-
-Based on this, suggest the perfect running route. Reply with ONLY a JSON object, nothing else:
-{
-  "km": 5,
-  "shape": "circle",
-  "reason": "short friendly explanation of why you picked this",
-  "tip": "one short running tip for this type of run"
-}
-
-Rules:
-- km must be between 1 and 42
-- shape must be one of: circle, square, triangle, zigzag
-- circle = smooth flowing run, best for beginners or scenic routes
-- square = good for intervals and structured training
-- triangle = good for varied terrain and hills  
-- zigzag = good for exploring an area back and forth
-- reason should be warm and encouraging, max 1 sentence
-- tip should be practical, max 1 sentence`
-          }]
-        })
+        body: JSON.stringify({ prompt: aiPrompt })
       })
 
-      const data = await response.json()
-      const text = data.content[0].text
-      const parsed = JSON.parse(text)
+      if (!response.ok) throw new Error('Request failed')
+
+      const parsed = await response.json()
       setKm(parsed.km)
       onAiRoute(parsed.shape, parsed.km)
       setAiResult(parsed)
