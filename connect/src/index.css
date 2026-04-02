@@ -1,0 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+@import './styles/layout.css';
+@import './styles/auth.css';
+@import './styles/steps.css';
+@import './styles/history.css';
+@import './styles/report.css';
+@import './styles/admin.css';
+@import './styles/navigation.css';
+@import './styles/settings.css';
+@import './styles/welcome.css';
+@import './styles/timer.css';

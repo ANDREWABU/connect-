@@ -1,0 +1,104 @@
+.admin-wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 5rem;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.admin-title {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.admin-subtitle {
+    font-size: 13px;
+    color: #999;
+    margin-top: 2px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    padding: 16px;
+}
+
+.stat-card.alert {
+    border: 1px solid #fca5a5;
+    background: #fff5f5;
+}
+
+.stat-card-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.stat-card-value {
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.stat-card-label {
+    font-size: 12px;
+    color: #999;
+    margin-top: 2px;
+}
+
+.report-message-box {
+    background: #f5f5f0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #444;
+    line-height: 1.6;
+}
+
+.status-buttons {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.status-btn {
+    flex: 1;
+    padding: 7px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+}
+
+.status-btn.open {
+    border: 1px solid #b45309;
+    background: #fff8e6;
+    color: #b45309;
+}
+
+.status-btn.inprogress {
+    border: 1px solid #1d4ed8;
+    background: #e6f0ff;
+    color: #1d4ed8;
+}
+
+.status-btn.resolved {
+    border: 1px solid #15803d;
+    background: #e6faf0;
+    color: #15803d;
+}
+
+.status-btn.inactive {
+    border: 1px solid #e0e0e0;
+    background: #fff;
+    color: #888; }

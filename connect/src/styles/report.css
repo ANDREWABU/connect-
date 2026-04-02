@@ -1,0 +1,65 @@
+.report-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.report-select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    background: #fff;
+    outline: none;
+    cursor: pointer;
+}
+
+.report-textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    background: #fff;
+    color: #111;
+    outline: none;
+    resize: vertical;
+    transition: border-color 0.15s;
+}
+
+.report-textarea:focus {
+    border-color: #111;
+}
+
+.report-success {
+    background: #e6faf0;
+    color: #15803d;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+.status-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.status-open {
+    background: #fff8e6;
+    color: #b45309;
+}
+
+.status-inprogress {
+    background: #e6f0ff;
+    color: #1d4ed8;
+}
+
+.status-resolved {
+    background: #e6faf0;
+    color: #15803d; }

@@ -1,0 +1,82 @@
+.history-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.history-empty-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+}
+
+.run-card {
+    padding: 16px 18px;
+}
+
+.run-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.run-shape-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f5f5f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.run-title {
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.run-date {
+    font-size: 12px;
+    color: #999;
+    margin-top: 2px;
+}
+
+.run-delete-btn {
+    border: none;
+    background: none;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0 4px;
+    transition: color 0.15s;
+}
+
+.run-delete-btn:hover {
+    color: #E24B4A;
+}
+
+.run-stats-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.run-stat {
+    flex: 1;
+    background: #f5f5f0;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+}
+
+.run-stat-value {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.run-stat-label {
+    font-size: 11px;
+    color: #999;
+    margin-top: 1px; }
