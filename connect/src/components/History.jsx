@@ -104,7 +104,13 @@ export default function History({ session }) {
         className="card history-empty"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}>
-        <div className="history-empty-icon">🏃</div>
+        <div className="history-empty-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="13" cy="4" r="2"/>
+            <path d="M7 9l2 2 2-4 3 3 2-2"/>
+            <path d="M5 20l4-8 3 3 4-6 3 5"/>
+          </svg>
+        </div>
         <p style={{ fontWeight: 500, marginBottom: 6 }}>No runs yet</p>
         <p style={{ fontSize: 13, color: '#999' }}>
           Complete a route and save it — it'll show up here
@@ -201,7 +207,7 @@ export default function History({ session }) {
                     color: run.actual_time_minutes < Math.round(run.distance_km * 6)
                       ? '#15803d' : '#b45309' }}>
                     {run.actual_time_minutes < Math.round(run.distance_km * 6)
-                      ? `${Math.round(run.distance_km * 6) - run.actual_time_minutes} min faster 🔥`
+                      ? `${Math.round(run.distance_km * 6) - run.actual_time_minutes} min faster`
                       : `${run.actual_time_minutes - Math.round(run.distance_km * 6)} min slower`}
                   </span>
                 </div>

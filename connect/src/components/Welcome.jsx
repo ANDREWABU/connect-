@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 const WELCOME_MESSAGES = [
     "Ready to crush a run today?",
     "Let's get those miles in!",
-    "Your next route is waiting 🏃",
+    "Your next route is waiting.",
     "Time to hit the pavement!",
     "Every run counts. Let's go!",
     "Lace up, it's time to move!",
@@ -15,20 +15,32 @@ const WELCOME_MESSAGES = [
     "Another day, another run. Let's go!",
   ]
   const STREAK_MESSAGES = [
-    "Keep the streak alive! 🔥",
-    "Don't break the chain! 🔥",
-    "You're on fire! Keep going! 🔥",
-    "Streak mode activated! 🔥",
+    "Keep the streak alive!",
+    "Don't break the chain!",
+    "You're on fire! Keep going!",
+    "Streak mode activated!",
   ]
 
+const BadgeIcon = ({ type }) => {
+  const s = { width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' }
+  if (type === 'streak_3') return <svg {...s}><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>
+  if (type === 'streak_7') return <svg {...s}><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/></svg>
+  if (type === 'streak_30') return <svg {...s}><path d="M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/><line x1="12" y1="6" x2="12" y2="18"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
+  if (type === 'runs_5') return <svg {...s}><circle cx="12" cy="4" r="2"/><path d="M9 8l-3 5h4l-1 7"/><path d="M15 8l3 5h-4l1 7"/><path d="M9 13l6 0"/></svg>
+  if (type === 'runs_10') return <svg {...s}><circle cx="12" cy="4" r="2"/><path d="M9 8l-3 5h4l-1 7"/><path d="M15 8l3 5h-4l1 7"/><path d="M6 20l12 0" strokeDasharray="2 2"/></svg>
+  if (type === 'km_50') return <svg {...s}><circle cx="12" cy="10" r="4"/><path d="M12 2v4M12 14v8M4 10h4M16 10h4"/></svg>
+  if (type === 'km_100') return <svg {...s}><path d="M12 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+  return null
+}
+
 const BADGES = {
-  streak_3:  { icon: '🥉', label: '3 day streak',  desc: 'Ran 3 days in a row' },
-  streak_7:  { icon: '🥈', label: '7 day streak',  desc: 'Ran 7 days in a row' },
-  streak_30: { icon: '🥇', label: '30 day streak', desc: 'Ran 30 days in a row' },
-  runs_5:    { icon: '👟', label: '5 runs',         desc: 'Completed 5 runs' },
-  runs_10:   { icon: '🏅', label: '10 runs',        desc: 'Completed 10 runs' },
-  km_50:     { icon: '🌍', label: '50km total',     desc: 'Ran 50km in total' },
-  km_100:    { icon: '🚀', label: '100km total',    desc: 'Ran 100km in total' },
+  streak_3:  { label: '3 day streak',  desc: 'Ran 3 days in a row' },
+  streak_7:  { label: '7 day streak',  desc: 'Ran 7 days in a row' },
+  streak_30: { label: '30 day streak', desc: 'Ran 30 days in a row' },
+  runs_5:    { label: '5 runs',         desc: 'Completed 5 runs' },
+  runs_10:   { label: '10 runs',        desc: 'Completed 10 runs' },
+  km_50:     { label: '50km total',     desc: 'Ran 50km in total' },
+  km_100:    { label: '100km total',    desc: 'Ran 100km in total' },
 }
 
 export default function Welcome({ session, onStart }) {
@@ -124,7 +136,7 @@ export default function Welcome({ session, onStart }) {
             badge_type: m.badge
           })
           // Show new badge popup
-          setNewBadge(BADGES[m.badge])
+          setNewBadge({ ...BADGES[m.badge], type: m.badge })
           setTimeout(() => setNewBadge(null), 4000)
         }
       }
@@ -159,7 +171,7 @@ export default function Welcome({ session, onStart }) {
               display: 'flex', alignItems: 'center', gap: 12,
               zIndex: 999, boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
             }}>
-            <span style={{ fontSize: 28 }}>{newBadge.icon}</span>
+            <BadgeIcon type={newBadge.type} />
             <div>
               <p style={{ fontWeight: 600, fontSize: 14 }}>Badge unlocked!</p>
               <p style={{ fontSize: 13, opacity: 0.8 }}>{newBadge.label}</p>
@@ -209,8 +221,12 @@ export default function Welcome({ session, onStart }) {
             }}>
             <div>
               <div style={{ fontSize: 13, opacity: 0.7, marginBottom: 2 }}>Current streak</div>
-              <div style={{ fontSize: 28, fontWeight: 700 }}>
-                🔥 {stats.streak} {stats.streak === 1 ? 'day' : 'days'}
+              <div style={{ fontSize: 28, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2c0 6-6 8-6 14a6 6 0 0012 0c0-6-6-8-6-14z"/>
+                  <path d="M12 12c0 3-2 4-2 6a2 2 0 004 0c0-2-2-3-2-6z" fill="currentColor" stroke="none"/>
+                </svg>
+                {stats.streak} {stats.streak === 1 ? 'day' : 'days'}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -265,7 +281,7 @@ export default function Welcome({ session, onStart }) {
                     display: 'flex', alignItems: 'center', gap: 8,
                     flex: '1 1 calc(50% - 4px)'
                   }}>
-                  <span style={{ fontSize: 24 }}>{badge.icon}</span>
+                  <BadgeIcon type={b.badge_type} />
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 500 }}>{badge.label}</div>
                     <div style={{ fontSize: 11, color: '#999' }}>{badge.desc}</div>
@@ -276,7 +292,7 @@ export default function Welcome({ session, onStart }) {
           </div>
         </motion.div>
       )}
-  
+
       {/* Locked badges */}
       {badges.length < Object.keys(BADGES).length && (
         <motion.div
@@ -292,7 +308,7 @@ export default function Welcome({ session, onStart }) {
                 <motion.div
                   key={key}
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.5 }}
+                  animate={{ opacity: 0.4 }}
                   transition={{ delay: 0.25 + i * 0.05 }}
                   style={{
                     background: '#f5f5f0', border: '1px solid #e8e8e8',
@@ -300,7 +316,7 @@ export default function Welcome({ session, onStart }) {
                     display: 'flex', alignItems: 'center', gap: 8,
                     flex: '1 1 calc(50% - 4px)'
                   }}>
-                  <span style={{ fontSize: 24, filter: 'grayscale(1)' }}>{badge.icon}</span>
+                  <BadgeIcon type={key} />
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 500 }}>{badge.label}</div>
                     <div style={{ fontSize: 11, color: '#999' }}>{badge.desc}</div>

@@ -139,17 +139,17 @@ export default function Admin({ session, onBack }) {
           {/* Stats grid */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 20 }}>
             {[
-              { label: 'total users', value: stats.totalUsers, icon: '👤' },
-              { label: 'routes generated', value: stats.totalRoutes, icon: '🗺️' },
-              { label: 'open reports', value: stats.openReports, icon: '🚨', alert: stats.openReports > 0 },
-              { label: 'runs completed', value: stats.totalRuns, icon: '🏃' },
+              { label: 'total users', value: stats.totalUsers },
+              { label: 'routes generated', value: stats.totalRoutes },
+              { label: 'open reports', value: stats.openReports, alert: stats.openReports > 0 },
+              { label: 'runs completed', value: stats.totalRuns },
             ].map(stat => (
               <div key={stat.label} className="card" style={{
                 padding: '16px',
                 border: stat.alert ? '1px solid #fca5a5' : '1px solid #e8e8e8',
                 background: stat.alert ? '#fff5f5' : '#fff'
               }}>
-                <div style={{ fontSize: 24, marginBottom: 8 }}>{stat.icon}</div>
+                <div style={{ marginBottom: 8 }} />
                 <div style={{ fontSize: 28, fontWeight: 600 }}>{stat.value}</div>
                 <div style={{ fontSize: 12, color: '#999', marginTop: 2 }}>{stat.label}</div>
               </div>

@@ -177,7 +177,7 @@ export default function StepDistance({ km, setKm, onNext, onAiRoute }) {
             {aiResult.reason}
           </p>
           <p style={{ fontSize: 12, color: '#15803d', fontStyle: 'italic' }}>
-            💡 {aiResult.tip}
+            → {aiResult.tip}
           </p>
 
           <button
