@@ -1,19 +1,35 @@
-export default async function handler(req, res) {
+export const config = {
+  runtime: 'edge',
+}
+
+export default async function handler(req) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 })
   }
 
-  const { prompt } = req.body
+  let body
+  try {
+    body = await req.json()
+  } catch {
+    return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400 })
+  }
+
+  const { prompt } = body
 
   if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
-    return res.status(400).json({ error: 'Missing prompt' })
+    return new Response(JSON.stringify({ error: 'Missing prompt' }), { status: 400 })
+  }
+
+  const apiKey = process.env.VITE_CLAUDE_API_KEY
+  if (!apiKey) {
+    return new Response(JSON.stringify({ error: 'API key not configured' }), { status: 500 })
   }
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': process.env.VITE_CLAUDE_API_KEY,
+      'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
@@ -21,11 +37,11 @@ export default async function handler(req, res) {
       max_tokens: 300,
       messages: [{
         role: 'user',
-        content: `You are a running coach assistant for an app called Connect that generates circular running routes.
+        content: `You are a running coach assistant for an app called Connect that generates running routes.
 
 The user said: "${prompt.trim()}"
 
-Based on this, suggest the perfect running route. Reply with ONLY a JSON object, nothing else:
+Reply with ONLY a JSON object, nothing else:
 {
   "km": 5,
   "shape": "circle",
@@ -36,18 +52,14 @@ Based on this, suggest the perfect running route. Reply with ONLY a JSON object,
 Rules:
 - km must be between 1 and 42
 - shape must be one of: circle, square, triangle, zigzag
-- circle = smooth flowing run, best for beginners or scenic routes
-- square = good for intervals and structured training
-- triangle = good for varied terrain and hills
-- zigzag = good for exploring an area back and forth
-- reason should be warm and encouraging, max 1 sentence
-- tip should be practical, max 1 sentence`
+- reason: warm and encouraging, max 1 sentence
+- tip: practical, max 1 sentence`
       }]
     })
   })
 
   if (!response.ok) {
-    return res.status(502).json({ error: 'AI request failed' })
+    return new Response(JSON.stringify({ error: 'AI request failed' }), { status: 502 })
   }
 
   const data = await response.json()
@@ -55,8 +67,11 @@ Rules:
 
   try {
     const parsed = JSON.parse(text)
-    return res.status(200).json(parsed)
+    return new Response(JSON.stringify(parsed), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    })
   } catch {
-    return res.status(502).json({ error: 'Invalid AI response' })
+    return new Response(JSON.stringify({ error: 'Invalid AI response' }), { status: 502 })
   }
 }
