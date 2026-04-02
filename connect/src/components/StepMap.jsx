@@ -84,7 +84,6 @@ export default function StepMap({ km, shape, session, onBack, onDone }) {
   const [error, setError] = useState('')
   const [locationLoading, setLocationLoading] = useState(true)
   const [locationError, setLocationError] = useState('')
-  const [locationDenied, setLocationDenied] = useState(false)
   const [runName, setRunName] = useState('')
   const [routeReady, setRouteReady] = useState(false)
   const [shapePath, setShapePath] = useState([])
@@ -119,32 +118,15 @@ export default function StepMap({ km, shape, session, onBack, onDone }) {
     }
   }, [center, shape, km])
 
-  const requestLocation = async () => {
+  const requestLocation = () => {
     setLocationLoading(true)
     setLocationError('')
-    setLocationDenied(false)
 
     if (!navigator.geolocation) {
       setLocationError('Location not supported. Click map to set start point.')
-      setCenter(c => c || { lat: 43.6532, lng: -79.3832 })
+      setCenter({ lat: 43.6532, lng: -79.3832 })
       setLocationLoading(false)
       return
-    }
-
-    // Check permission state where supported (Android Chrome, desktop)
-    if (navigator.permissions) {
-      try {
-        const status = await navigator.permissions.query({ name: 'geolocation' })
-        if (status.state === 'denied') {
-          setLocationDenied(true)
-          setLocationError('Location blocked. Enable it in your device settings.')
-          setCenter(c => c || { lat: 43.6532, lng: -79.3832 })
-          setLocationLoading(false)
-          return
-        }
-      } catch (_) {
-        // permissions API not supported — fall through to direct request
-      }
     }
 
     navigator.geolocation.getCurrentPosition(
@@ -155,14 +137,9 @@ export default function StepMap({ km, shape, session, onBack, onDone }) {
         })
         setLocationLoading(false)
       },
-      (err) => {
-        if (err.code === err.PERMISSION_DENIED) {
-          setLocationDenied(true)
-          setLocationError('Location blocked. Enable it in your device settings.')
-        } else {
-          setLocationError('Could not get location. Click map to set start point.')
-        }
-        setCenter(c => c || { lat: 43.6532, lng: -79.3832 })
+      () => {
+        setLocationError('Location denied. Click map to set start point.')
+        setCenter({ lat: 43.6532, lng: -79.3832 })
         setLocationLoading(false)
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -265,61 +242,38 @@ export default function StepMap({ km, shape, session, onBack, onDone }) {
           marginBottom: 12, padding: '8px 12px',
           background: '#f5f5f0', borderRadius: 8
         }}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
-            <circle cx="7" cy="5.5" r="2.5" stroke="#666" strokeWidth="1.5"/>
-            <path d="M7 14C7 14 2 9 2 5.5a5 5 0 0 1 10 0C12 9 7 14 7 14Z" stroke="#666" strokeWidth="1.5" fill="none"/>
-          </svg>
           <span style={{ fontSize: 13, color: '#666' }}>
-            {km}km {shapeLabels[shape]}
+            📍 {km}km {shapeLabels[shape]}
           </span>
         </div>
 
         {locationLoading ? (
           <div style={{ background: '#f5f5f0', borderRadius: 8,
-            padding: '10px 14px', fontSize: 13, color: '#888', marginBottom: 12,
-            display: 'flex', alignItems: 'center', gap: 8 }}>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
-              <circle cx="7" cy="5.5" r="2.5" stroke="#aaa" strokeWidth="1.5"/>
-              <path d="M7 14C7 14 2 9 2 5.5a5 5 0 0 1 10 0C12 9 7 14 7 14Z" stroke="#aaa" strokeWidth="1.5" fill="none"/>
-            </svg>
-            Getting your location...
+            padding: '10px 14px', fontSize: 13, color: '#888', marginBottom: 12 }}>
+            📍 Getting your location...
           </div>
         ) : locationError ? (
-          <div style={{ background: '#f5f5f0', borderRadius: 8,
-            padding: '10px 14px', fontSize: 13, color: '#333',
-            marginBottom: 12, display: 'flex',
-            justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
-                <path d="M7 1L13 12H1L7 1Z" stroke="#333" strokeWidth="1.5" strokeLinejoin="round"/>
-                <line x1="7" y1="5.5" x2="7" y2="8.5" stroke="#333" strokeWidth="1.5" strokeLinecap="round"/>
-                <circle cx="7" cy="10.5" r="0.75" fill="#333"/>
-              </svg>
-              <span>{locationError}</span>
-            </div>
-            {!locationDenied && (
-              <button onClick={requestLocation} style={{
-                border: '1px solid #333', background: '#111', color: '#fff',
-                borderRadius: 6, padding: '4px 10px', fontSize: 12,
-                cursor: 'pointer', fontFamily: 'DM Sans, sans-serif', flexShrink: 0
-              }}>
-                Try again
-              </button>
-            )}
-          </div>
-        ) : (
-          <div style={{ background: '#f5f5f0', borderRadius: 8,
-            padding: '10px 14px', fontSize: 13, color: '#333',
+          <div style={{ background: '#fff8e6', borderRadius: 8,
+            padding: '10px 14px', fontSize: 13, color: '#b45309',
             marginBottom: 12, display: 'flex',
             justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
-                <polyline points="2,7 5.5,10.5 12,4" stroke="#111" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span>Using your current location</span>
-            </div>
+            <span>⚠️ {locationError}</span>
             <button onClick={requestLocation} style={{
-              border: 'none', background: 'none', color: '#555',
+              border: 'none', background: '#b45309', color: '#fff',
+              borderRadius: 6, padding: '4px 10px', fontSize: 12,
+              cursor: 'pointer', fontFamily: 'DM Sans, sans-serif'
+            }}>
+              Try again
+            </button>
+          </div>
+        ) : (
+          <div style={{ background: '#e6faf0', borderRadius: 8,
+            padding: '10px 14px', fontSize: 13, color: '#15803d',
+            marginBottom: 12, display: 'flex',
+            justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>✓ Using your current location</span>
+            <button onClick={requestLocation} style={{
+              border: 'none', background: 'none', color: '#15803d',
               fontSize: 12, cursor: 'pointer', textDecoration: 'underline',
               fontFamily: 'DM Sans, sans-serif'
             }}>
@@ -384,6 +338,7 @@ export default function StepMap({ km, shape, session, onBack, onDone }) {
           {[
             { label: 'Distance', value: km + ' km' },
             { label: 'Est. time', value: Math.round(km * 6) + ' min' },
+            { label: 'Calories', value: Math.round(km * 70) + ' kcal' },
           ].map(stat => (
             <div key={stat.label} className="stat-box">
               <div className="stat-value">{stat.value}</div>
@@ -398,22 +353,18 @@ export default function StepMap({ km, shape, session, onBack, onDone }) {
       {!routeReady && (
         <button className="btn-primary" onClick={confirmRoute}
           disabled={locationLoading}>
-          Confirm {shape} route →
+          Confirm {shape} route ✓
         </button>
       )}
 
       {routeReady && (
         <>
           <div style={{
-            background: '#f5f5f0', borderRadius: 12,
+            background: '#e6faf0', borderRadius: 12,
             padding: '12px 16px', marginTop: 12,
-            fontSize: 13, color: '#333',
-            display: 'flex', alignItems: 'center', gap: 8
+            fontSize: 13, color: '#15803d'
           }}>
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
-              <polyline points="2,7 5.5,10.5 12,4" stroke="#111" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Route confirmed! Save it or open in Google Maps to navigate.
+            ✓ Route confirmed! Save it or open in Google Maps to navigate.
           </div>
 
           <div style={{ marginTop: 12 }}>
@@ -427,7 +378,7 @@ export default function StepMap({ km, shape, session, onBack, onDone }) {
 
           <button className="btn-outline" onClick={saveToHistory}
             disabled={saving || saved}>
-            {saved ? 'Saved to history' : saving ? 'Saving...' : 'Save run to history'}
+            {saved ? '✓ Saved to history!' : saving ? 'Saving...' : 'Save run to history'}
           </button>
 
           <button onClick={openInGoogleMaps} style={{

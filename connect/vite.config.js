@@ -7,4 +7,14 @@ export default defineConfig({
     port: 3001,
     strictPort: true,
   },
+  build: {
+    rollupOptions: {},
+  },
+  environments: {
+    client: {
+      build: {
+        rollupOptions: {},
+      },
+    },
+  },
 });
