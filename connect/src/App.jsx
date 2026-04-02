@@ -9,7 +9,6 @@ import Settings from './components/Settings'
 import Welcome from './components/Welcome'
 import Admin from './pages/Admin'
 
-// Page transition variants — slides in from right, out to left like Instagram
 const pageVariants = {
   initial: { opacity: 0, x: 30 },
   animate: { opacity: 1, x: 0 },
@@ -22,7 +21,6 @@ const pageTransition = {
   damping: 30
 }
 
-// Fade up — for cards and content
 const fadeUp = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
@@ -261,7 +259,6 @@ export default function App() {
         )}
       </motion.div>
 
-      {/* Tab content with smooth transitions */}
       <AnimatePresence mode="wait">
 
         {/* HOME */}
@@ -295,7 +292,7 @@ export default function App() {
               className="btn-outline"
               onClick={() => { setShowRun(false); setStep(1) }}
               style={{ marginBottom: 16 }}>
-              ← Back to home
+              ←
             </motion.button>
 
             <div style={{ display: 'flex', gap: 6, marginBottom: 24 }}>
@@ -351,7 +348,7 @@ export default function App() {
               className="btn-outline"
               onClick={() => setActiveTab('home')}
               style={{ marginBottom: 16 }}>
-              ← Back to home
+              ←
             </motion.button>
             <History session={session} />
           </motion.div>
@@ -371,7 +368,7 @@ export default function App() {
               className="btn-outline"
               onClick={() => setActiveTab('home')}
               style={{ marginBottom: 16 }}>
-              ← Back to home
+              ←
             </motion.button>
             <Settings session={session} onLogout={handleLogout} />
           </motion.div>
