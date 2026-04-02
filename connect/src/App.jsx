@@ -121,7 +121,7 @@ export default function App() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -40 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          style={{ maxWidth: 400, margin: '80px auto', padding: '0 1rem' }}>
+          style={{ maxWidth: 400, margin: '48px auto', padding: '0 1rem' }}>
 
           <motion.div
             className="auth-logo"
@@ -443,4 +443,4 @@ export default function App() {
       </div>
     </div>
   )
-}
+}t
