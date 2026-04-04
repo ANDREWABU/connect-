@@ -33,7 +33,7 @@ export default async function handler(req) {
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-3-5-haiku-20241022',
       max_tokens: 300,
       messages: [{
         role: 'user',
@@ -59,7 +59,8 @@ Rules:
   })
 
   if (!response.ok) {
-    return new Response(JSON.stringify({ error: 'AI request failed' }), { status: 502 })
+    const errText = await response.text()
+    return new Response(JSON.stringify({ error: 'AI request failed', status: response.status, detail: errText }), { status: 502 })
   }
 
   const data = await response.json()
@@ -72,6 +73,6 @@ Rules:
       headers: { 'Content-Type': 'application/json' }
     })
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid AI response' }), { status: 502 })
+    return new Response(JSON.stringify({ error: 'Invalid AI response', raw: text }), { status: 502 })
   }
 }
