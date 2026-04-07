@@ -64,7 +64,9 @@ Rules:
   }
 
   const data = await response.json()
-  const text = data.content[0].text
+  const raw = data.content[0].text
+  // strip markdown code fences if present
+  const text = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
 
   try {
     const parsed = JSON.parse(text)
@@ -73,6 +75,6 @@ Rules:
       headers: { 'Content-Type': 'application/json' }
     })
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid AI response', raw: text }), { status: 502 })
+    return new Response(JSON.stringify({ error: 'Invalid AI response', raw }), { status: 502 })
   }
 }
