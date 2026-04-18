@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../supabase'
 
 export default function Settings({ session, onLogout }) {
-  const [profile, setProfile] = useState(null)
   const [fullName, setFullName] = useState('')
   const [avatarUrl, setAvatarUrl] = useState(null)
   const [uploading, setUploading] = useState(false)
@@ -33,7 +32,6 @@ export default function Settings({ session, onLogout }) {
       .single()
 
     if (data) {
-      setProfile(data)
       setFullName(data.full_name || '')
       if (data.avatar_url) {
         const { data: urlData } = supabase

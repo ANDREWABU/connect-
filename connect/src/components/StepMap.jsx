@@ -87,6 +87,7 @@ export default function StepMap({ km, shape, session, onBack, onDone }) {
   const [runName, setRunName] = useState('')
   const [routeReady, setRouteReady] = useState(false)
   const [shapePath, setShapePath] = useState([])
+  const [mapInstance, setMapInstance] = useState(null)
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -117,6 +118,13 @@ export default function StepMap({ km, shape, session, onBack, onDone }) {
       setShapePath(path)
     }
   }, [center, shape, km])
+
+  useEffect(() => {
+    if (!mapInstance || shapePath.length === 0) return
+    const bounds = new window.google.maps.LatLngBounds()
+    shapePath.forEach(p => bounds.extend(p))
+    mapInstance.fitBounds(bounds, 40)
+  }, [mapInstance, shapePath])
 
   const requestLocation = () => {
     setLocationLoading(true)
@@ -291,6 +299,7 @@ export default function StepMap({ km, shape, session, onBack, onDone }) {
             mapContainerStyle={{ width: '100%', height: 300, borderRadius: 12 }}
             center={center}
             zoom={14}
+            onLoad={map => setMapInstance(map)}
             onClick={e => {
               setCenter({ lat: e.latLng.lat(), lng: e.latLng.lng() })
               setRouteReady(false)

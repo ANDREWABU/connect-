@@ -46,15 +46,20 @@ export default function App() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
 
+  // Restore session on mount and listen for auth changes
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
-      if (session) checkAdmin(session.user.id)
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
-      if (session) checkAdmin(session.user.id)
+      if (!session) {
+        setStep(1)
+        setActiveTab('home')
+        setIsAdmin(false)
+        setShowRun(false)
+      }
     })
 
     return () => subscription.unsubscribe()
@@ -75,6 +80,16 @@ export default function App() {
     setAuthError('')
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) setAuthError(error.message)
+    setLoading(false)
+  }
+
+  const handleDemoLogin = async () => {
+    setLoading(true)
+    setAuthError('')
+    await supabase.auth.signInWithPassword({
+      email: 'demo@connect.run',
+      password: 'demo1234',
+    })
     setLoading(false)
   }
 
@@ -194,6 +209,30 @@ export default function App() {
                     className="btn-primary" type="submit" disabled={loading}>
                     {loading ? 'Logging in...' : 'Log in'}
                   </motion.button>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '4px 0' }}>
+                    <div style={{ flex: 1, height: 1, background: '#e8e8e8' }} />
+                    <span style={{ fontSize: 12, color: '#bbb' }}>or</span>
+                    <div style={{ flex: 1, height: 1, background: '#e8e8e8' }} />
+                  </div>
+
+                  <motion.button
+                    type="button"
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleDemoLogin}
+                    disabled={loading}
+                    style={{
+                      width: '100%', padding: '11px 0',
+                      background: '#f5f5f0', border: '1px solid #e0e0e0',
+                      borderRadius: 12, fontSize: 14, fontWeight: 500,
+                      fontFamily: 'DM Sans, sans-serif', cursor: 'pointer',
+                      color: '#444'
+                    }}>
+                    Try the demo account
+                  </motion.button>
+                  <p style={{ fontSize: 12, color: '#bbb', textAlign: 'center', margin: '2px 0 0' }}>
+                    demo@connect.run · demo1234
+                  </p>
                 </motion.form>
               )}
 
@@ -478,4 +517,4 @@ export default function App() {
       </div>
     </div>
   )
-}t
+}
